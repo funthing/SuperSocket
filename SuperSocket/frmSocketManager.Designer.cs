@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnOpenSocket = new System.Windows.Forms.Button();
             this.btnCloseSocket = new System.Windows.Forms.Button();
             this.txtMessage = new System.Windows.Forms.TextBox();
@@ -93,6 +93,8 @@
             // 
             // dgvSesssions
             // 
+            this.dgvSesssions.AllowUserToAddRows = false;
+            this.dgvSesssions.AllowUserToDeleteRows = false;
             this.dgvSesssions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvSesssions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.clmName,
@@ -101,6 +103,7 @@
             this.clmOperational});
             this.dgvSesssions.Location = new System.Drawing.Point(335, 152);
             this.dgvSesssions.Name = "dgvSesssions";
+            this.dgvSesssions.ReadOnly = true;
             this.dgvSesssions.RowTemplate.Height = 23;
             this.dgvSesssions.Size = new System.Drawing.Size(719, 401);
             this.dgvSesssions.TabIndex = 6;
@@ -124,11 +127,12 @@
             // 
             // clmOperational
             // 
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.NullValue = "关闭";
-            this.clmOperational.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.NullValue = "关闭";
+            this.clmOperational.DefaultCellStyle = dataGridViewCellStyle2;
             this.clmOperational.HeaderText = "操作";
             this.clmOperational.Name = "clmOperational";
+            this.clmOperational.ReadOnly = true;
             this.clmOperational.Text = "";
             // 
             // frmSocketManager
@@ -158,10 +162,10 @@
         private System.Windows.Forms.TextBox txtMessage;
         private System.Windows.Forms.Button btnSendMessage;
         public System.Windows.Forms.TextBox txtLog;
-        private System.Windows.Forms.DataGridView dgvSesssions;
         private System.Windows.Forms.DataGridViewTextBoxColumn clmName;
         private System.Windows.Forms.DataGridViewTextBoxColumn clmIP;
         private System.Windows.Forms.DataGridViewCheckBoxColumn clmSelect;
         private System.Windows.Forms.DataGridViewButtonColumn clmOperational;
+        public System.Windows.Forms.DataGridView dgvSesssions;
     }
 }

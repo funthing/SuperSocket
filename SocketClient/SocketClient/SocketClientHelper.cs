@@ -81,6 +81,7 @@ namespace SocketClient
         /// <param name="o"></param>
         static void Recive(Object o)
         {
+            //如果目标服务器关闭，只有在第二次发送数据的时候才会触发异常
             try
             {
                 var send = o as Socket;
@@ -97,9 +98,9 @@ namespace SocketClient
                     ReceiveMsg(str);
                 }
             }
-            catch(Exception ex)
+            catch (SocketException ex)
             {
-                if(ex.Message.Contains("远程主机强迫关闭了一个现有的连接"))
+                if (ex.NativeErrorCode.Equals(10053) && !FormHelper.frm.worker.IsBusy)
                 {
                     FormHelper.DisConnect();
                     FormHelper.frm.worker.RunWorkerAsync(60);
@@ -114,16 +115,26 @@ namespace SocketClient
         /// <param name="message">消息内容</param>
         public static void Send(string action, string message)
         {
-            if (socketClient == null)
+            try
             {
-                InitializeServer();
+                if (socketClient == null)
+                {
+                    InitializeServer();
+                }
+                if(IsConnected())
+                {
+                    byte[] bytes = Encoding.UTF8.GetBytes($"{action} {message} \r\n");
+                    socketClient.Send(bytes);
+                }
             }
-            if (!IsConnected())
+            catch (SocketException ex)
             {
-                ConnectionServer();
+                if(ex.NativeErrorCode.Equals(10053)&&!FormHelper.frm.worker.IsBusy)
+                {
+                    FormHelper.DisConnect();
+                    FormHelper.frm.worker.RunWorkerAsync(60);
+                }
             }
-            byte[] bytes = Encoding.UTF8.GetBytes($"{action} {message} \r\n");
-            socketClient.Send(bytes);
         }
 
         /// <summary>
@@ -132,17 +143,30 @@ namespace SocketClient
         /// <returns></returns>
         public static bool IsConnected()
         {
-            bool isConnected = false;
-            if (socketClient.Poll(-1, SelectMode.SelectRead))
+            bool blockingState = socketClient.Blocking;
+            try
             {
-                byte[] temp = new byte[1024];
-                int nRead = socketClient.Receive(temp);
-                if (nRead != 0)
+                byte[] tmp = new byte[1];
+                socketClient.Blocking = false;
+                socketClient.Send(tmp, 0, 0);
+                return true;
+            }
+            catch (SocketException e)
+            {
+                // 产生 10035 == WSAEWOULDBLOCK 错误，说明被阻止了，但是还是连接的  
+                if (e.NativeErrorCode.Equals(10053))
                 {
-                    isConnected = true;
+                    return false;
+                }
+                else
+                {
+                    return true;
                 }
             }
-            return isConnected;
+            finally
+            {
+                socketClient.Blocking = blockingState;    // 恢复状态  
+            }
         }
     }
 }

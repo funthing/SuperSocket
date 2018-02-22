@@ -98,17 +98,17 @@
             // lblAutoReconnention
             // 
             this.lblAutoReconnention.AutoSize = true;
-            this.lblAutoReconnention.Location = new System.Drawing.Point(567, 63);
+            this.lblAutoReconnention.Location = new System.Drawing.Point(573, 63);
             this.lblAutoReconnention.Name = "lblAutoReconnention";
-            this.lblAutoReconnention.Size = new System.Drawing.Size(185, 12);
+            this.lblAutoReconnention.Size = new System.Drawing.Size(173, 12);
             this.lblAutoReconnention.TabIndex = 8;
-            this.lblAutoReconnention.Text = "连接服务器失败，60秒后自动重连";
+            this.lblAutoReconnention.Text = "您已掉线，将在60秒后自动重连";
             this.lblAutoReconnention.Visible = false;
             // 
             // linklblConnention
             // 
             this.linklblConnention.AutoSize = true;
-            this.linklblConnention.Location = new System.Drawing.Point(685, 86);
+            this.linklblConnention.Location = new System.Drawing.Point(691, 86);
             this.linklblConnention.Name = "linklblConnention";
             this.linklblConnention.Size = new System.Drawing.Size(53, 12);
             this.linklblConnention.TabIndex = 9;

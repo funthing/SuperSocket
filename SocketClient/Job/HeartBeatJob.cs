@@ -14,15 +14,7 @@ namespace SocketClient.Job
         {
             await Task.Run(new Action(() =>
             {
-                if (SocketClientHelper.IsConnected())
-                {
-                    SocketClientHelper.Send("HEARTBEAT", "心跳");
-                }
-                else
-                {
-                    FormHelper.DisConnect();
-                    FormHelper.frm.worker.RunWorkerAsync(60);
-                }
+                SocketClientHelper.Send("HEARTBEAT", "心跳");
             }));
         }
     }

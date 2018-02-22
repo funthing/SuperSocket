@@ -30,6 +30,7 @@ namespace SuperSocket
         {
             //将窗体当作变量赋值给类，以便于在类中操作窗体中的控件
             FormHelper.frm = this;
+            dgvSesssions.AutoGenerateColumns = false;
         }
 
         private void btnSendMessage_Click(object sender, EventArgs e)

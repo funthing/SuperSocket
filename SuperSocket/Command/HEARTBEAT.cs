@@ -28,7 +28,6 @@ namespace SuperSocket.Command
                     { 
                         session.Send("OK\r\n");
                         FormHelper.WriteLogToTxtLog($"收到{session.SN}的心跳");
-                        //TODO:接收心跳的逻辑有问题
                         session.Count = 0;
                         session.isLogin = true;
                     }

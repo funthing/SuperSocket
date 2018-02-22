@@ -97,6 +97,11 @@ namespace SocketClient
                         Thread.Sleep(1000);
                         worker.ReportProgress(i - 1);
                     }
+                    else
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
                 }
                 if (!SocketClientHelper.ConnectionServer())
                 {
@@ -107,19 +112,24 @@ namespace SocketClient
 
         private void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
+            //TODO:在此方法内操作窗体不应报错
             lblAutoReconnention.Text = $"您已掉线，将在{e.ProgressPercentage}秒后自动重连";
         }
 
         private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (SocketClientHelper.ConnectionServer())
+            //判断任务完成是正常完成还是被取消掉
+            if(!e.Cancelled)
             {
-                FormHelper.IsConnect();
-            }
-            else
-            {
-                txtReciveMsg.Text += $"重连失败{Environment.NewLine}";
-                worker.RunWorkerAsync(60);
+                if (SocketClientHelper.ConnectionServer())
+                {
+                    FormHelper.IsConnect();
+                }
+                else
+                {
+                    txtReciveMsg.Text += $"重连失败{Environment.NewLine}";
+                    worker.RunWorkerAsync(60);
+                }
             }
         }
 

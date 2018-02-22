@@ -14,7 +14,6 @@ namespace SuperSocket.SuperSocket
     static class SocketHelper
     {
         public static FunThingServer appServer=null;
-        public static IBootstrap _bootstrap;
         /// <summary>
         /// 开启Socket服务并绑定相关事件
         /// 监听服务即为AppServer

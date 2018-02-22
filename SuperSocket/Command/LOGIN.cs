@@ -45,6 +45,11 @@ namespace SuperSocket.Command
                         }
                     }, null,0, 1000);
 
+                    //TODO:更新主页面dgvSessions列表、
+                    FormHelper.frm.Invoke(new Action(() =>
+                    {
+                        FormHelper.frm.dgvSesssions.DataSource = SocketHelper.appServer.GetAllSessions().Where(x => x.isLogin == true).ToList();
+                    }));
                 }
                 catch(Exception e)
                 {
