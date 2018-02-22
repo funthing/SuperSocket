@@ -14,18 +14,14 @@ namespace SocketClient.Job
         {
             await Task.Run(new Action(() =>
             {
-                try
+                if (SocketClientHelper.IsConnected())
                 {
                     SocketClientHelper.Send("HEARTBEAT", "心跳");
                 }
-                //TODO:可能有多个异常，如何正确捕获SOCKET失去连接引发的异常
-                catch(Exception e)
+                else
                 {
-                    if(e.Message.Contains("")&&!FormHelper.frm.worker.IsBusy)
-                    {
-                        FormHelper.DisConnect();
-                        FormHelper.frm.worker.RunWorkerAsync(60);
-                    }
+                    FormHelper.DisConnect();
+                    FormHelper.frm.worker.RunWorkerAsync(60);
                 }
             }));
         }

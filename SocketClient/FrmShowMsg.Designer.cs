@@ -65,6 +65,7 @@
             this.cmbAction.Name = "cmbAction";
             this.cmbAction.Size = new System.Drawing.Size(121, 20);
             this.cmbAction.TabIndex = 4;
+            this.cmbAction.SelectedIndexChanged += new System.EventHandler(this.cmbAction_SelectedIndexChanged);
             // 
             // btnSend
             // 
