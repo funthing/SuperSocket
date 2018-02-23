@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using SocketClient.SocketClient;
+using SuperSocket.ClientEngine;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -12,39 +13,11 @@ using System.Threading.Tasks;
 
 namespace SocketClient
 {
-    //声明接收信息的委托
     public delegate void ReceiveMsgHandler(string msg);
     static class SocketClientHelper
     {
-        /// <summary>
-        /// 声明接收信息的事件
-        /// </summary>
-        public static event ReceiveMsgHandler ReceiveMsg;
-        public static Socket socketClient;
-
-        /// <summary>
-        /// 初始化服务器
-        /// </summary>
-        public static void InitializeServer()
-        {
-            try
-            {
-                socketClient = new Socket(SocketType.Stream, ProtocolType.Tcp);
-                if (ConnectionServer())
-                {
-                    //从服务器端接收数据
-                    Thread thread = new Thread(new ParameterizedThreadStart(Recive))
-                    {
-                        IsBackground = true
-                    };
-                    thread.Start(socketClient);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //变量添加get和set可以对读写权限进行控制，以及检验设置的值是否符合要求，如果无上述需求，可省略
+        public static EasyClient<MyPackageInfo> socketClient;
 
         /// <summary>
         /// 连接到服务器
@@ -56,56 +29,22 @@ namespace SocketClient
             {
                 if (socketClient == null)
                 {
-                    InitializeServer();
+                    socketClient = new EasyClient<MyPackageInfo>();
+                    socketClient.Initialize(new MyReceiveFilter());
                 }
                 string ipStr = ConfigurationManager.AppSettings["SocketIP"].ToString();
                 int port = int.Parse(ConfigurationManager.AppSettings["SocketPort"].ToString());
                 IPAddress ip = IPAddress.Parse(ipStr);
                 IPEndPoint point = new IPEndPoint(ip, port);
                 //进行连接
-                socketClient.Connect(point);
+                var connected = socketClient.ConnectAsync(point).Result;
             }
             catch (Exception ex)
             {
-                if (ex.Message.Contains("由于目标计算机积极拒绝，无法连接"))
-                {
-                    return false;
-                }
-            }
-            return IsConnected();
-        }
 
-        /// <summary>
-        /// 不停的接收服务器返回的信息
-        /// </summary>
-        /// <param name="o"></param>
-        static void Recive(Object o)
-        {
-            //如果目标服务器关闭，只有在第二次发送数据的时候才会触发异常
-            try
-            {
-                var send = o as Socket;
-                while (true)
-                {
-                    //获取发送过来的消息
-                    byte[] buffer = new byte[1024 * 1024 * 2];
-                    var effective = send.Receive(buffer);
-                    if (effective == 0)
-                    {
-                        break;
-                    }
-                    var str = Encoding.UTF8.GetString(buffer, 0, effective);
-                    ReceiveMsg(str);
-                }
+                throw;
             }
-            catch (SocketException ex)
-            {
-                if (ex.NativeErrorCode.Equals(10053) && !FormHelper.frm.worker.IsBusy)
-                {
-                    FormHelper.DisConnect();
-                    FormHelper.frm.worker.RunWorkerAsync(60);
-                }
-            }
+            return true;
         }
 
         /// <summary>
@@ -115,57 +54,15 @@ namespace SocketClient
         /// <param name="message">消息内容</param>
         public static void Send(string action, string message)
         {
-            try
+            if (socketClient.IsConnected&&socketClient!=null)
             {
-                if (socketClient == null)
-                {
-                    InitializeServer();
-                }
-                if(IsConnected())
-                {
-                    byte[] bytes = Encoding.UTF8.GetBytes($"{action} {message} \r\n");
-                    socketClient.Send(bytes);
-                }
+                byte[] bytes = Encoding.UTF8.GetBytes($"{action} {message} \r\n");
+                socketClient.Send(bytes);
             }
-            catch (SocketException ex)
+            else if(!FormHelper.frm.worker.IsBusy)
             {
-                if(ex.NativeErrorCode.Equals(10053)&&!FormHelper.frm.worker.IsBusy)
-                {
-                    FormHelper.DisConnect();
-                    FormHelper.frm.worker.RunWorkerAsync(60);
-                }
-            }
-        }
-
-        /// <summary>
-        /// 判断客户端是否正常连接到服务器
-        /// </summary>
-        /// <returns></returns>
-        public static bool IsConnected()
-        {
-            bool blockingState = socketClient.Blocking;
-            try
-            {
-                byte[] tmp = new byte[1];
-                socketClient.Blocking = false;
-                socketClient.Send(tmp, 0, 0);
-                return true;
-            }
-            catch (SocketException e)
-            {
-                // 产生 10035 == WSAEWOULDBLOCK 错误，说明被阻止了，但是还是连接的  
-                if (e.NativeErrorCode.Equals(10053))
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            finally
-            {
-                socketClient.Blocking = blockingState;    // 恢复状态  
+                FormHelper.DisConnect();
+                FormHelper.frm.worker.RunWorkerAsync(60);
             }
         }
     }

@@ -48,11 +48,15 @@ namespace SuperSocket.SuperSocket
                 }
                 
             }
-            catch (FormatException)
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            /*catch (FormatException)
             {
 
                 FormHelper.WriteLogToTxtLog("IP端口号错误，仅支持数字");
-            }
+            }*/
         }
         public static void CloseSocket()
         {

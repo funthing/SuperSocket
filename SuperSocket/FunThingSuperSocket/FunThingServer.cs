@@ -1,5 +1,7 @@
-﻿using SuperSocket.SocketBase;
+﻿using SuperSocket.FunThingSuperSocket;
+using SuperSocket.SocketBase;
 using SuperSocket.SocketBase.Config;
+using SuperSocket.SocketBase.Protocol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,17 +13,11 @@ namespace SuperSocket.SuperSocket
     /// <summary>
     /// 微信服务
     /// </summary>
-    public class FunThingServer : AppServer<FunThingSession>
+    public class FunThingServer : AppServer<FunThingSession,MyRequestInfo>
     {
-        /// <summary>
-        /// 使用配置启动服务
-        /// </summary>
-        /// <param name="rootConfig"></param>
-        /// <param name="config"></param>
-        /// <returns></returns>
-        protected override bool Setup(IRootConfig rootConfig, IServerConfig config)
+        public FunThingServer():base(new DefaultReceiveFilterFactory<MyReceiveFilter,MyRequestInfo>())
         {
-            return base.Setup(rootConfig, config);
+
         }
 
         protected override void OnStarted()
@@ -36,5 +32,6 @@ namespace SuperSocket.SuperSocket
             FormHelper.WriteLogToTxtLog("FunThing服务停止成功");
             base.OnStopped();
         }
+
     }
 }

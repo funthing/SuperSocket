@@ -1,4 +1,5 @@
-﻿using SuperSocket.SocketBase.Command;
+﻿using SuperSocket.FunThingSuperSocket;
+using SuperSocket.SocketBase.Command;
 using SuperSocket.SocketBase.Protocol;
 using SuperSocket.SuperSocket;
 using System;
@@ -12,18 +13,12 @@ namespace SuperSocket.Command
     /// <summary>
     /// 客户端确认已经收到消息
     /// </summary>
-    class IGET : CommandBase<FunThingSession, StringRequestInfo>
+    class IGET : CommandBase<FunThingSession, MyRequestInfo>
     {
-        public override void ExecuteCommand(FunThingSession session, StringRequestInfo requestInfo)
+        public override void ExecuteCommand(FunThingSession session, MyRequestInfo requestInfo)
         {
-            //只接受一个参数
-            if (requestInfo.Parameters.Count() != 1)
-            {
-                session.Send("参数错误\r\n");
-                return;
-            }
             //获取参数
-            string key = requestInfo.Parameters[0];
+            string key = requestInfo.Body;
             if (string.IsNullOrWhiteSpace(key))
             {
                 session.Send("guid 不能为空\r\n");

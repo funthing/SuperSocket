@@ -6,14 +6,17 @@ using System.Text;
 using System.Threading.Tasks;
 using SuperSocket.SocketBase.Protocol;
 using System.Threading;
+using SuperSocket.FunThingSuperSocket;
 
 namespace SuperSocket.SuperSocket
 {
     /// <summary>
     /// 微信Session
     /// </summary>
-    public class FunThingSession:AppSession<FunThingSession>
+    public class FunThingSession:AppSession<FunThingSession,MyRequestInfo>
     {
+        public FunThingSession()
+        { }
         /// <summary>
         /// 是否登陆
         /// </summary>
@@ -47,7 +50,7 @@ namespace SuperSocket.SuperSocket
             base.OnInit();
         }
 
-        protected override void HandleUnknownRequest(StringRequestInfo requestInfo)
+        protected override void HandleUnknownRequest(MyRequestInfo requestInfo)
         {
             FormHelper.WriteLogToTxtLog("收到未知命令："+requestInfo.Key.ToString());
             this.Send(requestInfo.Key.ToString()+ "命令未定义\r\n");

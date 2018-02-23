@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SuperSocket.FunThingSuperSocket;
 using SuperSocket.SocketBase.Command;
 using SuperSocket.SocketBase.Protocol;
 using SuperSocket.SuperSocket;
@@ -11,54 +12,64 @@ using System.Threading.Tasks;
 
 namespace SuperSocket.Command
 {
-   public class LOGIN : CommandBase<FunThingSession, StringRequestInfo>
+    public class LOGIN : CommandBase<FunThingSession, MyRequestInfo>
     {
-        public override void ExecuteCommand(FunThingSession session, StringRequestInfo requestInfo)
+        private int Action = 1;
+        public override string Name
         {
-            if (requestInfo.Parameters.Count() == 1)
+            get { return Action.ToString(); }
+        }
+        public override void ExecuteCommand(FunThingSession session, MyRequestInfo requestInfo)
+        {
+
+            try
             {
-                try
+                dynamic param = JsonConvert.DeserializeObject(requestInfo.Body);
+                //已用此SN注册的连接会替换Sesion
+                var session_client = session.AppServer.GetAllSessions().Where(c => c.SN == param.SN.ToString());
+                if (session_client != null)
                 {
-                    dynamic param = JsonConvert.DeserializeObject(requestInfo.Parameters[0].ToString());
-                    //已用此SN注册的连接会替换Sesion
-                    var session_client = session.AppServer.GetAllSessions().Where(c => c.SN == param.SN.ToString());
-                    if (session_client != null)
+                    foreach (var item in session_client)
                     {
-                        foreach (var item in session_client)
-                        {
-                            item.Send("您的SN已在其他地方登陆\r\n");
-                            item.Close();
-                        }
+                        item.Send("您的SN已在其他地方登陆\r\n");
+                        item.Close();
                     }
-
-                    session.isLogin = true;
-                    session.SN = param.SN.ToString();
-                    session.Send("OK\r\n");
-                    FormHelper.WriteLogToTxtLog(session.SN+"已连接");
-                    session.Count = 0;
-                    session.timer = new Timer(delegate {
-                        session.Count++;
-                        if (session.Count >= 30)
-                        {
-                            session.isLogin = false;
-                            FormHelper.WriteLogToTxtLog($"{session.SN}已掉线");
-                        }
-                    }, null,0, 1000);
-
-                    //TODO:更新主页面dgvSessions列表、
-                    FormHelper.frm.Invoke(new Action(() =>
-                    {
-                        FormHelper.frm.dgvSesssions.DataSource = SocketHelper.appServer.GetAllSessions().Where(x => x.isLogin == true).ToList();
-                    }));
                 }
-                catch(Exception e)
+
+                session.isLogin = true;
+                session.SN = param.SN.ToString();
+
+                var response = BitConverter.GetBytes((ushort)12).Reverse().ToList();
+                var arr = Encoding.UTF8.GetBytes("OK");
+                response.AddRange(BitConverter.GetBytes((ushort)arr.Length).Reverse().ToArray());
+                response.AddRange(arr);
+                session.Send(response.ToArray(), 0, response.Count);
+
+                FormHelper.WriteLogToTxtLog(session.SN + "已连接");
+                session.Count = 0;
+                session.timer = new Timer(delegate
                 {
-                    session.Send(e.Message+ "\r\n");
-                }
+                    session.Count++;
+                    if (session.Count >= 30)
+                    {
+                        session.isLogin = false;
+                        FormHelper.WriteLogToTxtLog($"{session.SN}已掉线");
+                    }
+                }, null, 0, 1000);
+
+                //TODO:更新主页面dgvSessions列表、
+                FormHelper.frm.Invoke(new Action(() =>
+                {
+                    FormHelper.frm.dgvSesssions.DataSource = SocketHelper.appServer.GetAllSessions().Where(x => x.isLogin == true).ToList();
+                }));
             }
-            else
+            catch (Exception e)
             {
-                session.Send("参数不合法\r\n");
+                var response = BitConverter.GetBytes((ushort)12).Reverse().ToList();
+                var arr = Encoding.UTF8.GetBytes(e.Message);
+                response.AddRange(BitConverter.GetBytes((ushort)arr.Length).Reverse().ToArray());
+                response.AddRange(arr);
+                session.Send(response.ToArray(), 0, response.Count);
             }
         }
     }

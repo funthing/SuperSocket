@@ -14,7 +14,11 @@ namespace SocketClient.Job
         {
             await Task.Run(new Action(() =>
             {
-                SocketClientHelper.Send("HEARTBEAT", "心跳");
+                var bodyByte = Encoding.UTF8.GetBytes("心跳");
+                var rsHeart = new List<byte> { 0, 2 };
+                rsHeart.AddRange(BitConverter.GetBytes((ushort)(bodyByte.Length)).Reverse().ToArray());
+                rsHeart.AddRange(bodyByte);
+                SocketClientHelper.socketClient.Send(rsHeart.ToArray());
             }));
         }
     }

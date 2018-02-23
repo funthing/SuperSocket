@@ -74,6 +74,8 @@
     <Compile Include="Command\LOGIN.cs" />
     <Compile Include="CustomerException\InitializationException.cs" />
     <Compile Include="FunThingSuperSocket\FormHelper.cs" />
+    <Compile Include="FunThingSuperSocket\MyReceiveFilter.cs" />
+    <Compile Include="FunThingSuperSocket\MyRequestInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FunThingSuperSocket\SocketHelper.cs" />
