@@ -52,7 +52,7 @@ namespace SocketClient
                     SocketClientHelper.socketClient.Closed += SocketClient_Closed;
                     SocketClientHelper.socketClient.Connected += SocketClient_Connected;
                     FormHelper.IsConnect();
-                    dynamic body = new { SN = "测试账号" };
+                    dynamic body = new { SN = DateTime.Now.ToString() };
                     string bodyStr = JsonConvert.SerializeObject(body);
                     var bodyByte = Encoding.UTF8.GetBytes(bodyStr);
                     var rsLogin = new List<byte> { 0,1};

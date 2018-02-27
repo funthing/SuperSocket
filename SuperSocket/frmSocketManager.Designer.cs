@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btnOpenSocket = new System.Windows.Forms.Button();
             this.btnCloseSocket = new System.Windows.Forms.Button();
             this.txtMessage = new System.Windows.Forms.TextBox();
@@ -36,9 +36,11 @@
             this.txtLog = new System.Windows.Forms.TextBox();
             this.dgvSesssions = new System.Windows.Forms.DataGridView();
             this.clmName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.clmSessionID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clmIP = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clmSelect = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.clmOperational = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.clmIsLogin = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgvSesssions)).BeginInit();
             this.SuspendLayout();
             // 
@@ -98,42 +100,66 @@
             this.dgvSesssions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvSesssions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.clmName,
+            this.clmSessionID,
             this.clmIP,
             this.clmSelect,
-            this.clmOperational});
+            this.clmOperational,
+            this.clmIsLogin});
             this.dgvSesssions.Location = new System.Drawing.Point(335, 152);
             this.dgvSesssions.Name = "dgvSesssions";
             this.dgvSesssions.ReadOnly = true;
             this.dgvSesssions.RowTemplate.Height = 23;
             this.dgvSesssions.Size = new System.Drawing.Size(719, 401);
             this.dgvSesssions.TabIndex = 6;
+            this.dgvSesssions.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvSesssions_CellContentClick);
+            this.dgvSesssions.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvSesssions_CellFormatting);
+            this.dgvSesssions.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dgvSesssions_DataError);
             // 
             // clmName
             // 
             this.clmName.DataPropertyName = "SN";
             this.clmName.HeaderText = "名称";
             this.clmName.Name = "clmName";
+            this.clmName.ReadOnly = true;
+            // 
+            // clmSessionID
+            // 
+            this.clmSessionID.DataPropertyName = "SessionID";
+            this.clmSessionID.HeaderText = "SessionID";
+            this.clmSessionID.Name = "clmSessionID";
+            this.clmSessionID.ReadOnly = true;
+            this.clmSessionID.Visible = false;
             // 
             // clmIP
             // 
             this.clmIP.DataPropertyName = "IP";
             this.clmIP.HeaderText = "IP地址";
             this.clmIP.Name = "clmIP";
+            this.clmIP.ReadOnly = true;
             // 
             // clmSelect
             // 
             this.clmSelect.HeaderText = "选择";
             this.clmSelect.Name = "clmSelect";
+            this.clmSelect.ReadOnly = true;
             // 
             // clmOperational
             // 
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.NullValue = "关闭";
-            this.clmOperational.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.NullValue = "关闭";
+            this.clmOperational.DefaultCellStyle = dataGridViewCellStyle1;
             this.clmOperational.HeaderText = "操作";
             this.clmOperational.Name = "clmOperational";
             this.clmOperational.ReadOnly = true;
-            this.clmOperational.Text = "";
+            this.clmOperational.Text = "关闭";
+            this.clmOperational.ToolTipText = "关闭这个客户端";
+            // 
+            // clmIsLogin
+            // 
+            this.clmIsLogin.DataPropertyName = "IsLogin";
+            this.clmIsLogin.HeaderText = "是否登陆";
+            this.clmIsLogin.Name = "clmIsLogin";
+            this.clmIsLogin.ReadOnly = true;
             // 
             // frmSocketManager
             // 
@@ -162,10 +188,12 @@
         private System.Windows.Forms.TextBox txtMessage;
         private System.Windows.Forms.Button btnSendMessage;
         public System.Windows.Forms.TextBox txtLog;
+        public System.Windows.Forms.DataGridView dgvSesssions;
         private System.Windows.Forms.DataGridViewTextBoxColumn clmName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn clmSessionID;
         private System.Windows.Forms.DataGridViewTextBoxColumn clmIP;
         private System.Windows.Forms.DataGridViewCheckBoxColumn clmSelect;
         private System.Windows.Forms.DataGridViewButtonColumn clmOperational;
-        public System.Windows.Forms.DataGridView dgvSesssions;
+        private System.Windows.Forms.DataGridViewTextBoxColumn clmIsLogin;
     }
 }

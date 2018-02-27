@@ -38,5 +38,20 @@ namespace SuperSocket.SuperSocket
             }
 
         }
+        /// <summary>
+        /// 设置dgvSessions的数据源
+        /// </summary>
+        /// <param name="dataSource">数据源</param>
+        public static void UpdateDgvSessionsDataSource(IEnumerable<FunThingSession> dataSource)
+        {
+            if (frm != null)
+            {
+                frm.Invoke(new Action(() =>
+                {
+                    frm.dgvSesssions.DataSource = dataSource;
+                }));
+            }
+
+        }
     }
 }

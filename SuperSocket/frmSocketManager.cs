@@ -14,8 +14,6 @@ namespace SuperSocket
 {
     public partial class frmSocketManager : Form
     {
-        private List<FunThingSession> sessions = new List<FunThingSession>();
-
         public frmSocketManager()
         {
             InitializeComponent();
@@ -50,6 +48,42 @@ namespace SuperSocket
         private void btnCloseSocket_Click(object sender, EventArgs e)
         {
             SocketHelper.CloseSocket();
+        }
+
+        private void dgvSesssions_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            /* -1表示点击标题，>=0确保点击的是内容而不是标题，由于此事件是点击内容才会触发，故无需此判断
+            if(e.RowIndex>=0)
+            {
+            }*/
+            DataGridViewColumn column = dgvSesssions.Columns[e.ColumnIndex];
+            DataGridViewRow row = dgvSesssions.Rows[e.RowIndex];
+            string sessionID = row.Cells["SessionId"].Value.ToString();
+            if (column.CellType.Name == "DataGridViewButtonCell" && column.Name == "clmOperational")
+            {
+                FunThingSession session = SocketHelper.appServer.GetAllSessions().Single(s => s.SessionID == sessionID);
+                session.Close();
+            }
+        }
+        
+        private void dgvSesssions_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dgvSesssions.Columns[e.ColumnIndex].Name == "clmIsLogin")
+            {
+                if (Convert.ToBoolean(e.Value))
+                {
+                    e.Value = "是";
+                }
+                else
+                {
+                    e.Value = "否";
+                }
+            }
+        }
+
+        private void dgvSesssions_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            Console.WriteLine(e.Exception.Message);
         }
     }
 }

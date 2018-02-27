@@ -38,12 +38,6 @@ namespace SuperSocket.SuperSocket
         }
 
         public Timer timer { get; set; }
-        /// <summary>
-        /// 当有新的客户端连接时回调事件
-        /// </summary>
-        protected override void OnSessionStarted()
-        {
-        }
 
         protected override void OnInit()
         {
@@ -70,6 +64,11 @@ namespace SuperSocket.SuperSocket
         /// <param name="reason"></param>
         protected override void OnSessionClosed(CloseReason reason)
         {
+            /*既然关闭客户端可以立即被识别到，为什么还需要心跳包？
+             *在多次路由等极端情况下，此事件执行有可能会有延迟 
+             * 
+             */
+            SocketHelper.sessions.Remove(this);
             base.OnSessionClosed(reason);
 
         }

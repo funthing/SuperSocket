@@ -15,6 +15,10 @@ namespace SuperSocket.SuperSocket
     {
         public static FunThingServer appServer=null;
         /// <summary>
+        /// 测试发现GetAllSessions方法有一定几率为空，
+        /// </summary>
+        public static List<FunThingSession> sessions=new List<FunThingSession>();
+        /// <summary>
         /// 开启Socket服务并绑定相关事件
         /// 监听服务即为AppServer
         /// 客户端连接为Session

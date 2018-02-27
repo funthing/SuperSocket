@@ -38,7 +38,7 @@ namespace SuperSocket.Command
 
                 session.isLogin = true;
                 session.SN = param.SN.ToString();
-
+                SocketHelper.sessions.Add(session);
                 var response = BitConverter.GetBytes((ushort)12).Reverse().ToList();
                 var arr = Encoding.UTF8.GetBytes("OK");
                 response.AddRange(BitConverter.GetBytes((ushort)arr.Length).Reverse().ToArray());
@@ -56,12 +56,9 @@ namespace SuperSocket.Command
                         FormHelper.WriteLogToTxtLog($"{session.SN}已掉线");
                     }
                 }, null, 0, 1000);
-
                 //TODO:更新主页面dgvSessions列表、
-                FormHelper.frm.Invoke(new Action(() =>
-                {
-                    FormHelper.frm.dgvSesssions.DataSource = SocketHelper.appServer.GetAllSessions().Where(x => x.isLogin == true).ToList();
-                }));
+                FormHelper.WriteLogToTxtLog(SocketHelper.sessions.Count().ToString());
+                FormHelper.UpdateDgvSessionsDataSource(SocketHelper.sessions);
             }
             catch (Exception e)
             {
